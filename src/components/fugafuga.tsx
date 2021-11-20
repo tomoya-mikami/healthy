@@ -34,14 +34,12 @@ const round = (n: number | null) => {
 
 export const Fugafuga: FC = (props: any) => {
   const [data, setData] = React.useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
-  const [lastThreeAxisMeasurement, setLastThreeAxisMeasurement] = React.useState<
-    ThreeAxisMeasurement
-  >({ x: 0, y: 0, z: 0 });
   const [dataQue, setDataQue] = React.useState<MLRequest[]>([]);
   const [subscription, setSubscription] = React.useState<any | undefined>(
     undefined
   );
   const [errorMessage, setErrorMessage] = React.useState("");
+  const [requestLock, setRequestLock] = React.useState(false);
 
   const _subscribe = () => {
     const listener = Accelerometer.addListener((accelerometerData) => {
@@ -65,12 +63,16 @@ export const Fugafuga: FC = (props: any) => {
   }, []);
   React.useEffect(() => {
     (async () => {
-      if (dataQue.length > DATA_QUE_SIZE) {
+      if (dataQue.length > DATA_QUE_SIZE && !requestLock) {
+        setRequestLock(true);
         const response = await post(TEST_URL, dataQue);
         if (typeof response === "string") {
           setErrorMessage(response);
+        } else {
+          setErrorMessage("");
         }
         setDataQue([]);
+        setRequestLock(false);
       }
     })();
   }, [dataQue]);
@@ -94,9 +96,6 @@ export const Fugafuga: FC = (props: any) => {
     >
       <Text>
         x: {round(data.x)} y: {round(data.y)} z: {round(data.z)}
-      </Text>
-      <Text>
-        {JSON.stringify(dataQue)}
       </Text>
       <Text>
         {errorMessage}
