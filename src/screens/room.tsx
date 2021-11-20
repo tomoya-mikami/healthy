@@ -49,6 +49,7 @@ export const RoomScreen: FC = (props: any) => {
   const [threeDistributed, setThreeDistributed] = React.useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
   const [currentStatus, setCurrentStatus] = React.useState(Status.OK);
   const [userList, setUserList] = React.useState<status[]>([]);
+  const [res, setres] = React.useState<status>();
 
   const _subscribe = () => {
     const listener = Accelerometer.addListener((accelerometerData) => {
@@ -63,9 +64,14 @@ export const RoomScreen: FC = (props: any) => {
   };
 
   const updateUserList = (res: status): void => {
-    setUserList([...userList, res])
+    setres(res)
     return
   }
+
+  React.useEffect(() => {
+    if (res === undefined) {return}
+    setUserList([...userList, res])
+  }, [res])
 
   // 初期化
   React.useEffect(() => {
@@ -79,29 +85,31 @@ export const RoomScreen: FC = (props: any) => {
   }, []);
 
   React.useEffect(() => {
+    let st: number = currentStatus;
     (async () => {
       if (dataQue.length > DATA_QUE_SIZE && !requestLock) {
         setRequestLock(true);
         if (isDataRateStop(dataQue)) {
           if (data.z > 0) {
             setCurrentStatus(Status.Concentration);
+            st = Status.Concentration
           } else {
             setCurrentStatus(Status.OK);
+            st = Status.OK
           }
           setErrorMessage("");
         } else {
-          const response = await post(TEST_URL, dataQue);
-          if (typeof response === "string") {
-            setErrorMessage(response);
-          } else {
-            setErrorMessage("");
-          }
+          // const response = await post(TEST_URL, dataQue);
+          // if (typeof response === "string") {
+          //   setErrorMessage(response);
+          // } else {
+          //   setErrorMessage("");
+          // }
         }
-        // TODO: websocket publish
         SendStatus({
-          id: "hogeid",
+          id: Date.now().toString(),
           name: "hogename",
-          status: currentStatus,
+          status: st,
           url: ""
         })
         setDataQue([]);
@@ -150,6 +158,9 @@ export const RoomScreen: FC = (props: any) => {
       </Text>
       <Text>
         status: {currentStatus}
+      </Text>
+      <Text>
+        res: {JSON.stringify(res)}
       </Text>
       <Text>
         {errorMessage}
