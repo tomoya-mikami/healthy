@@ -8,6 +8,7 @@ import { distributed, isDataRateStop } from "../utils/calculate";
 const UPDATE_MS = 100;
 const DATA_QUE_SIZE = 30;
 const TEST_URL = "http://1c77-180-39-77-67.ngrok.io/mochiage/1";
+const ML_URL = "https://healthy-ml-api-exggbigdnq-an.a.run.app/classifier";
 
 export interface MLRequest {
   digx: number,
@@ -18,12 +19,17 @@ export interface MLRequest {
   accz: number,
 }
 
+interface MLRequestWithStatus {
+  actions: MLRequest[];
+  status: number;
+}
+
 enum Status {
   Leave = 1,
   Concentration = 2,
   OK = 3,
-  Question = 4,
-  Thankyou = 5
+  Question = -1,
+  Thankyou = -2
 }
 
 const round = (n: number | null) => {
@@ -73,18 +79,27 @@ export const RoomScreen: FC = (props: any) => {
       if (dataQue.length > DATA_QUE_SIZE && !requestLock) {
         setRequestLock(true);
         if (isDataRateStop(dataQue)) {
-          if (data.z > 0) {
-            setCurrentStatus(Status.Concentration);
-          } else {
-            setCurrentStatus(Status.OK);
+          if (currentStatus !== Status.Question) {
+            if (data.z > 0) {
+              setCurrentStatus(Status.Concentration);
+            } else {
+              setCurrentStatus(Status.OK);
+            }
           }
           setErrorMessage("");
         } else {
-          const response = await post(TEST_URL, dataQue);
-          if (typeof response === "string") {
-            setErrorMessage(response);
-          } else {
-            setErrorMessage("");
+          if (currentStatus !== Status.Leave) {
+            const mlRequest: MLRequestWithStatus = {
+              actions: dataQue,
+              status: currentStatus
+            }
+            const response = await post<{ status: number }>(ML_URL, mlRequest);
+            if (typeof response === "string") {
+              setErrorMessage(response);
+            } else {
+              setCurrentStatus(response.status);
+              setErrorMessage("");
+            }
           }
         }
         setDataQue([]);
