@@ -77,7 +77,7 @@ export const RoomScreen: FC = (props: any) => {
 
   React.useEffect(() => {
     if (res === undefined) { return }
-    if (res.status === Status.Question) {
+    if (res.status === Status.Question && currentStatus !== Status.Concentration) {
       Vibration.vibrate(300);
     }
     const newUserList = JSON.parse(JSON.stringify(userList))
