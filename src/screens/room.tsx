@@ -54,7 +54,7 @@ export const RoomScreen: FC = (props: any) => {
   const [requestLock, setRequestLock] = React.useState(false);
   const [threeDistributed, setThreeDistributed] = React.useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
   const [currentStatus, setCurrentStatus] = React.useState(Status.OK);
-  const [userList, setUserList] = React.useState<status[]>([]);
+  const [userList, setUserList] = React.useState<{[key: string]: status}>({});
   const [res, setres] = React.useState<status>();
 
   const _subscribe = () => {
@@ -76,7 +76,9 @@ export const RoomScreen: FC = (props: any) => {
 
   React.useEffect(() => {
     if (res === undefined) {return}
-    setUserList([...userList, res])
+    const newUserList = JSON.parse(JSON.stringify(userList))
+    newUserList[res.id] = res
+    setUserList(newUserList)
   }, [res])
 
   // 初期化
@@ -170,7 +172,7 @@ export const RoomScreen: FC = (props: any) => {
         disX: {threeDistributed.x} disY: {threeDistributed.y} disZ: {threeDistributed.z}
       </Text>
       <Text>
-        {userList.map(user => user.name).join('\n')}
+        {Object.values(userList).sort((a, b) => a.status - b.status).map(u => u.name).join('👋\n')}
       </Text>
       <Text>
         status: {currentStatus}
