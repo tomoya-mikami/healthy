@@ -2,12 +2,21 @@ import React, { FC } from "react";
 import { Text, View } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from 'expo-sensors';
 import { post } from "../utils/request";
+import { distributed, isDataRateStop } from "../utils/calculate";
 
 const UPDATE_MS = 100;
 const DATA_QUE_SIZE = 30;
 const TEST_URL = "http://1c77-180-39-77-67.ngrok.io/mochiage/1";
 
-interface MLRequest {
+enum Status {
+  Leave = 1,
+  Concentration = 2,
+  OK = 3,
+  Question = 4,
+  Thankyou = 5
+}
+
+export interface MLRequest {
   digx: number,
   digy: number,
   digz: number
@@ -45,6 +54,8 @@ export const Fugafuga: FC = (props: any) => {
   );
   const [errorMessage, setErrorMessage] = React.useState("");
   const [requestLock, setRequestLock] = React.useState(false);
+  const [threeDistributed, setThreeDistributed] = React.useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
+  const [currentStatus, setCurrentStatus] = React.useState(Status.OK);
 
   const _subscribe = () => {
     const listener = Accelerometer.addListener((accelerometerData) => {
@@ -70,13 +81,23 @@ export const Fugafuga: FC = (props: any) => {
     (async () => {
       if (dataQue.length > DATA_QUE_SIZE && !requestLock) {
         setRequestLock(true);
-        const response = await post(TEST_URL, dataQue);
-        if (typeof response === "string") {
-          setErrorMessage(response);
-        } else {
+        if (isDataRateStop(dataQue)) {
+          if (data.z > 0) {
+            setCurrentStatus(Status.Concentration);
+          } else {
+            setCurrentStatus(Status.OK);
+          }
           setErrorMessage("");
+        } else {
+          const response = await post(TEST_URL, dataQue);
+          if (typeof response === "string") {
+            setErrorMessage(response);
+          } else {
+            setErrorMessage("");
+          }
         }
         setDataQue([]);
+        setThreeDistributed(distributed(dataQue));
         setRequestLock(false);
       }
     })();
@@ -111,6 +132,12 @@ export const Fugafuga: FC = (props: any) => {
     >
       <Text>
         x: {round(data.x)} y: {round(data.y)} z: {round(data.z)}
+      </Text>
+      <Text>
+        disX: {threeDistributed.x} disY: {threeDistributed.y} disZ: {threeDistributed.z}
+      </Text>
+      <Text>
+        status: {currentStatus}
       </Text>
       <Text>
         {errorMessage}
