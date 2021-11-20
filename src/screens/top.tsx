@@ -1,16 +1,15 @@
-import React from "react";
-import { StyleSheet } from "react-native";
-import { View, Center, VStack, Heading, HStack, Text, Link, Code, Button } from "native-base";
-// import { DarkMode } from "../components/toggles";
-import { LearnNativeBase } from "../components/links";
+import React, {useState} from "react";
+import { StyleSheet, TextInput } from "react-native";
+import { View, Center, VStack, Heading, HStack, Text, Code } from "native-base";
 import { Buttons } from "../components/buttons";
 
 
 export const TopScreenn: React.FC = (props: any) => {
+  const [nickname, setNickname] = useState('')
   return (
     <View style={styles.container}>
       <Center
-        _dark={{ bg: 'blueGray.900' }}
+        // _dark={{ bg: 'blueGray.900' }}
         _light={{ bg: 'blueGray.50' }}
         px={4}
         flex={1}
@@ -22,7 +21,11 @@ export const TopScreenn: React.FC = (props: any) => {
             <Code>App.tsx</Code>
             <Text>and save to reload.</Text>
           </HStack>
-          <Buttons.toRoom {...props} title="join" />
+          <TextInput
+            placeholder="ニックネームを入力"
+            onChangeText={(txt: string) => setNickname(txt)}
+          />
+          <Buttons.toRoom {...props} title="join" nickname={nickname} id={Date.now().toString()} />
         </VStack>
       </Center>
     </View>

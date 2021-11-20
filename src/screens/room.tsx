@@ -107,8 +107,8 @@ export const RoomScreen: FC = (props: any) => {
           // }
         }
         SendStatus({
-          id: Date.now().toString(),
-          name: "hogename",
+          id: props.route.params.id,
+          name: props.route.params.nickname,
           status: st,
           url: ""
         })
@@ -164,6 +164,15 @@ export const RoomScreen: FC = (props: any) => {
       </Text>
       <Text>
         {errorMessage}
+      </Text>
+      <Text>
+        props: {JSON.stringify(props)}
+      </Text>
+      <Text>
+        nickName: {props.route.params.nickname}
+      </Text>
+      <Text>
+        id: {props.route.params.id}
       </Text>
     </View>
   );
