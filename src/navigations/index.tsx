@@ -1,42 +1,32 @@
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createStackNavigator } from "@react-navigation/stack";
+import { stackNameObject } from "../constants/navigation";
+import { TopScreenn } from "../screens/top";
+import { RoomScreen } from "../screens/room";
+import { NavigationContainer } from '@react-navigation/native';
 
-import { topNav } from "./top";
-import { mypageNav } from "./mypage";
-import { settingNav } from "./setting";
-import { drawerNameObject, tabNameObject } from "../constants/navigation";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-const Tab = createBottomTabNavigator();
-const Drawer = createDrawerNavigator();
+const Stack = createStackNavigator();
 // 全体の画面構成をここで作成してNavigationContainerで囲む
-const homeTab: React.FC = () => {
-  return (
-    <Tab.Navigator
-      initialRouteName={tabNameObject.top}
-      screenOptions={{ headerShown: false }}
-    >
-      <Tab.Screen name={tabNameObject.top} component={topNav} />
-      <Tab.Screen name={tabNameObject.mypage} component={mypageNav} />
-    </Tab.Navigator>
-  );
-};
 const nav: React.FC = () => {
-  return (
-    <NavigationContainer>
-      <Drawer.Navigator
-        initialRouteName={drawerNameObject.setting}
-        screenOptions={{ headerShown: false }}
-      >
-        <Drawer.Screen name={drawerNameObject.home} component={homeTab} />
-        <Drawer.Screen
-          name={drawerNameObject.setting}
-          component={settingNav}
-        />
-      </Drawer.Navigator>
-    </NavigationContainer>
-  );
+    return (
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName={stackNameObject.top}
+          screenOptions={{ headerShown: true }}
+        >
+          <Stack.Screen
+            name={stackNameObject.room}
+            options={{ title: "ルーム詳細" }}
+            component={RoomScreen}
+          />
+          <Stack.Screen
+            name={stackNameObject.top}
+            options={{ title: "トップ" }}
+            component={TopScreenn}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
 };
 export default nav;

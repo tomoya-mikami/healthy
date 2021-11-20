@@ -1,11 +1,12 @@
 import React from "react";
 import { StyleSheet } from "react-native";
-import { View, Center, VStack, Heading, HStack, Text, Link, Code } from "native-base";
-import { DarkMode } from "../../components/toggles";
-import { LearnNativeBase } from "../../components/links";
+import { View, Center, VStack, Heading, HStack, Text, Link, Code, Button } from "native-base";
+// import { DarkMode } from "../components/toggles";
+import { LearnNativeBase } from "../components/links";
+import { Buttons } from "../components/buttons";
 
 
-export const home: React.FC = (props: any) => {
+export const TopScreenn: React.FC = (props: any) => {
   return (
     <View style={styles.container}>
       <Center
@@ -21,8 +22,7 @@ export const home: React.FC = (props: any) => {
             <Code>App.tsx</Code>
             <Text>and save to reload.</Text>
           </HStack>
-          <LearnNativeBase />
-          <DarkMode />
+          <Buttons.toRoom {...props} title="join" />
         </VStack>
       </Center>
     </View>

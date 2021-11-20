@@ -1,10 +1,11 @@
 import React, { FC } from "react";
 import { Button } from "native-base";
+import { stackNameObject } from "../constants/navigation"
 
 export namespace Buttons {
-  export const toDetails: FC = (props: any) => {
+  export const toRoom: FC = (props: any) => {
     return (
-      <Button onPress={() => props.navigation.navigate("Details")}>
+      <Button onPress={() => props.navigation.navigate(stackNameObject.room)}>
         {props.title}
       </Button>
     );
@@ -12,7 +13,7 @@ export namespace Buttons {
 
   export const toHome: FC = (props: any) => {
     return (
-      <Button onPress={() => props.navigation.navigate("Home")}>
+      <Button onPress={() => props.navigation.navigate(stackNameObject.top)}>
         {props.title}
       </Button>
     );
