@@ -12,7 +12,7 @@ export const JoinRoom = (): void => {
   return;
 };
 
-export interface status {
+export type status = {
   id: string;
   name: string;
   status: number;
@@ -24,14 +24,9 @@ export const SendStatus = (data: status): void => {
   return;
 };
 
-export const SetStatusListener = (
-  setCheered: React.Dispatch<React.SetStateAction<number>>
-): void => {
-  socket.on("cheered", (time: number) => {
-    setCheered(time);
-    return;
-  });
-};
+export const SetStatusListener = (fn: (data: status) => void): void => {
+  socket.on("userStatus", fn);
+}
 
 export const Disconnect = (): void => {
   socket.disconnect();

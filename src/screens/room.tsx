@@ -4,6 +4,7 @@ import { Text,  View  } from "react-native";
 import { Accelerometer, ThreeAxisMeasurement } from 'expo-sensors';
 import { post } from "../utils/rest";
 import { distributed, isDataRateStop } from "../utils/calculate";
+import { JoinRoom, SendStatus, SetStatusListener, status } from "../utils/websocket";
 
 const UPDATE_MS = 100;
 const DATA_QUE_SIZE = 30;
@@ -47,6 +48,7 @@ export const RoomScreen: FC = (props: any) => {
   const [requestLock, setRequestLock] = React.useState(false);
   const [threeDistributed, setThreeDistributed] = React.useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
   const [currentStatus, setCurrentStatus] = React.useState(Status.OK);
+  const [userList, setUserList] = React.useState<status[]>([]);
 
   const _subscribe = () => {
     const listener = Accelerometer.addListener((accelerometerData) => {
@@ -60,14 +62,22 @@ export const RoomScreen: FC = (props: any) => {
     return;
   };
 
+  const updateUserList = (res: status): void => {
+    setUserList([...userList, res])
+    return
+  }
+
   // 初期化
   React.useEffect(() => {
     (async () => {
         _subscribe();
       Accelerometer.setUpdateInterval(UPDATE_MS);
+      JoinRoom()
+      SetStatusListener(updateUserList)
     })();
     return () => _unsubscribe();
   }, []);
+
   React.useEffect(() => {
     (async () => {
       if (dataQue.length > DATA_QUE_SIZE && !requestLock) {
@@ -87,6 +97,13 @@ export const RoomScreen: FC = (props: any) => {
             setErrorMessage("");
           }
         }
+        // TODO: websocket publish
+        SendStatus({
+          id: "hogeid",
+          name: "hogename",
+          status: currentStatus,
+          url: ""
+        })
         setDataQue([]);
         setThreeDistributed(distributed(dataQue));
         setRequestLock(false);
@@ -127,6 +144,9 @@ export const RoomScreen: FC = (props: any) => {
       </Text>
       <Text>
         disX: {threeDistributed.x} disY: {threeDistributed.y} disZ: {threeDistributed.z}
+      </Text>
+      <Text>
+        {userList.map(user => user.name).join('\n')}
       </Text>
       <Text>
         status: {currentStatus}
