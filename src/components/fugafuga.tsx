@@ -11,7 +11,9 @@ interface MLRequest {
   digx: number,
   digy: number,
   digz: number
-  //acc: ThreeAxisMeasurement
+  accx: number,
+  accy: number,
+  accz: number,
 }
 
 const diffMeasurement = (
@@ -34,6 +36,9 @@ const round = (n: number | null) => {
 
 export const Fugafuga: FC = (props: any) => {
   const [data, setData] = React.useState<ThreeAxisMeasurement>({ x: 0, y: 0, z: 0 });
+  const [lastThreeAxisMeasurement, setLastThreeAxisMeasurement] = React.useState<
+    ThreeAxisMeasurement
+  >({ x: 0, y: 0, z: 0 });
   const [dataQue, setDataQue] = React.useState<MLRequest[]>([]);
   const [subscription, setSubscription] = React.useState<any | undefined>(
     undefined
@@ -78,14 +83,24 @@ export const Fugafuga: FC = (props: any) => {
   }, [dataQue]);
   React.useEffect(() => {
     (async () => {
+      const roundX = round(data.x);
+      const roundY = round(data.y);
+      const roundZ = round(data.z);
+      const beforeRoundX = round(lastThreeAxisMeasurement.x);
+      const beforeRoundY = round(lastThreeAxisMeasurement.y);
+      const beforeRoundZ = round(lastThreeAxisMeasurement.z);
       const accRequest: MLRequest = {
-        digx: round(data.x),
-        digy: round(data.y),
-        digz: round(data.z)
+        digx: roundX,
+        digy: roundY,
+        digz: roundZ,
+        accx: (beforeRoundX - roundX) * UPDATE_MS,
+        accy: (beforeRoundY - roundY) * UPDATE_MS,
+        accz: (beforeRoundZ - roundZ) * UPDATE_MS
       };
       const newDataQue: MLRequest[] = JSON.parse(JSON.stringify(dataQue));
       newDataQue.push(accRequest);
       setDataQue(newDataQue);
+      setLastThreeAxisMeasurement(data);
     })();
   }, [data]);
   return (
