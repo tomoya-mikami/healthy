@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { Buttons } from "../components/buttons";
-import { Text,  View  } from "react-native";
+import { Text, View, StyleSheet, Vibration } from "react-native";
+import { CheckIcon, HStack, CloseIcon, InfoOutlineIcon, SunIcon, MoonIcon } from "native-base";
 import { Accelerometer, ThreeAxisMeasurement } from 'expo-sensors';
 import { post } from "../utils/rest";
 import { distributed, isDataRateStop } from "../utils/calculate";
@@ -75,7 +76,10 @@ export const RoomScreen: FC = (props: any) => {
   }
 
   React.useEffect(() => {
-    if (res === undefined) {return}
+    if (res === undefined) { return }
+    if (res.status === Status.Question) {
+      Vibration.vibrate(300);
+    }
     const newUserList = JSON.parse(JSON.stringify(userList))
     newUserList[res.id] = res
     setUserList(newUserList)
@@ -164,34 +168,70 @@ export const RoomScreen: FC = (props: any) => {
         flex: 1,
       }}
     >
-      <Buttons.back {...props} title="Back to top"/>
-      <Text>
-        x: {round(data.x)} y: {round(data.y)} z: {round(data.z)}
-      </Text>
-      <Text>
-        disX: {threeDistributed.x} disY: {threeDistributed.y} disZ: {threeDistributed.z}
-      </Text>
-      <Text>
-        {Object.values(userList).sort((a, b) => a.status - b.status).map(u => u.name).join('👋\n')}
-      </Text>
-      <Text>
-        status: {currentStatus}
-      </Text>
-      <Text>
-        res: {JSON.stringify(res)}
-      </Text>
-      <Text>
-        {errorMessage}
-      </Text>
-      <Text>
-        props: {JSON.stringify(props)}
-      </Text>
-      <Text>
-        nickName: {props.route.params.nickname}
-      </Text>
-      <Text>
-        id: {props.route.params.id}
-      </Text>
+      <Buttons.back {...props} title="Back to top" />
+      {Object.values(userList).sort((a, b) => a.status - b.status).map(u => {
+        return (
+          <View key={u.id}>
+            <HStack space={2} alignItems='center' style={styles.user}>
+              {u.status === Status.OK && (
+                <CheckIcon size="16" mt="0.5" color="emerald.500" />
+              )}
+              {u.status === Status.Concentration && (
+                <CloseIcon size="16" mt="0.5" color="red.500" />
+              )}
+              {u.status === Status.Question && (
+                <InfoOutlineIcon size="16" mt="0.5" color="blue.500" />
+              )}
+              {u.status === Status.Thankyou && (
+                <SunIcon size="16" mt="0.5" color="orange.500" />
+              )}
+              {u.status === Status.Leave && (
+                <MoonIcon size="16" mt="0.5" color="black" />
+              )}
+              <Text style={styles.nameText}>{u.name}</Text>
+            </HStack>
+            {u.url !== "" && (
+              <Text style={styles.nameText}>{u.url}</Text>
+            )}
+          </View>
+        )
+      })}
+      <View>
+        <Text>
+          x: {round(data.x)} y: {round(data.y)} z: {round(data.z)}
+        </Text>
+        <Text>
+          disX: {threeDistributed.x} disY: {threeDistributed.y} disZ: {threeDistributed.z}
+        </Text>
+        <Text>
+          status: {currentStatus}
+        </Text>
+        <Text>
+          res: {JSON.stringify(res)}
+        </Text>
+        <Text>
+          {errorMessage}
+        </Text>
+        <Text>
+          props: {JSON.stringify(props)}
+        </Text>
+        <Text>
+          nickName: {props.route.params.nickname}
+        </Text>
+        <Text>
+          id: {props.route.params.id}
+        </Text>
+      </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  nameText: {
+    fontSize: 48,
+    fontWeight: "bold"
+  },
+  user: {
+    margin: 10
+  }
+});
