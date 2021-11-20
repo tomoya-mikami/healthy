@@ -20,6 +20,12 @@ export const Fugafuga: FC = (props: any) => {
 
   const _subscribe = () => {
     const listener = Accelerometer.addListener((accelerometerData) => {
+      const logJson = {
+        x: round(accelerometerData.x),
+        y: round(accelerometerData.y),
+        z: round(accelerometerData.z)
+      };
+      console.log(logJson);
       setData(accelerometerData);
     });
     setSubscription(listener);
