@@ -219,8 +219,10 @@ export const RoomScreen: FC = (props: any) => {
                 <Text style={styles.nameText}>{u.name}</Text>
               </VStack>
               {u.url !== "" && (
-                <MeetURL url={u.url}/>
-                // <Text style={styles.nameText}>{u.url}</Text>
+                <View style={styles.urlText}>
+                  <MeetURL url={u.url}/>
+                  {/* <Text style={styles.nameText}>{u.url}</Text> */}
+                </View>
               )}
               <View
                 style={{
@@ -233,33 +235,33 @@ export const RoomScreen: FC = (props: any) => {
             </View>
           )
         })}
-        </ScrollView>
-        <View>
-          <Text>
+        <View style={styles.debugLogWrapper}>
+          <Text style={styles.debugLog}>
             x: {round(data.x)} y: {round(data.y)} z: {round(data.z)}
           </Text>
-          <Text>
+          <Text style={styles.debugLog}>
             disX: {round(threeDistributed.x)} disY: {round(threeDistributed.y)} disZ: {round(threeDistributed.z)}
           </Text>
-          <Text>
+          <Text style={styles.debugLog}>
             status: {currentStatus}
           </Text>
-          <Text>
+          <Text style={styles.debugLog}>
             res: {JSON.stringify(res)}
           </Text>
-          <Text>
+          <Text style={styles.debugLog}>
             {errorMessage}
           </Text>
-          <Text>
+          <Text style={styles.debugLog}>
             props: {JSON.stringify(props)}
           </Text>
-          <Text>
+          <Text style={styles.debugLog}>
             nickName: {props.route.params.nickname}
           </Text>
-          <Text>
+          <Text style={styles.debugLog}>
             id: {props.route.params.id}
           </Text>
         </View>
+        </ScrollView>
       </View>
     </View>
   );
@@ -315,4 +317,15 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#555555"
   },
+  urlText: {
+    marginLeft: 30
+  },
+  debugLogWrapper: {
+    marginTop: 300,
+    marginLeft: 30,
+    marginRight: 30,
+  },
+  debugLog: {
+    color: "#aaaaaa"
+  }
 });

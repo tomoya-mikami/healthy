@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { ImageBackground, StyleSheet, TextInput, Text} from "react-native";
+import { Image, ImageBackground, StyleSheet, TextInput, Text} from "react-native";
 import { View, Center, VStack, Heading, HStack, Code, Box } from "native-base";
 import { Buttons } from "../components/buttons";
 
@@ -8,12 +8,12 @@ export const TopScreenn: React.FC = (props: any) => {
   const [nickname, setNickname] = useState('')
   return (
     <Box style={styles.container}>
-      <ImageBackground source={require("../../assets/bg.png")} resizeMode="cover" style={styles.image}>
+      <ImageBackground source={require("../../assets/bg.png")} resizeMode="cover" style={styles.bgimage}>
         <Center
           px={4}
           flex={1}
         >
-          <Text style={styles.titleText}>Syncる</Text>
+          <Image source={require("../../assets/logo.png")} resizeMode="cover" style={styles.image} />
           <VStack space={5} alignItems='center'>
             <TextInput
               style={styles.textInput}
@@ -33,9 +33,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f3ecdc",
     flex: 1
   },
-  image: {
+  bgimage: {
     justifyContent: "center",
     flex: 1,
+  },
+  image: {
+    justifyContent: "center",
   },
   titleText: {
     color: "#FFFFFF",
