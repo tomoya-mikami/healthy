@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { StyleSheet, TextInput,   Text} from "react-native";
+import { ImageBackground, StyleSheet, TextInput, Text} from "react-native";
 import { View, Center, VStack, Heading, HStack, Code, Box } from "native-base";
 import { Buttons } from "../components/buttons";
 
@@ -8,32 +8,53 @@ export const TopScreenn: React.FC = (props: any) => {
   const [nickname, setNickname] = useState('')
   return (
     <Box style={styles.container}>
-      <Center
-        // _dark={{ bg: 'blueGray.900' }}
-        _light={{ bg: 'blueGray.50' }}
-        px={4}
-        flex={1}
-      >
-      <Text style={styles.nameText}>Syncる</Text>
-      <VStack space={5} alignItems='center'>
-        <TextInput
-          placeholder="ニックネームを入力"
-          onChangeText={(txt: string) => setNickname(txt)}
-        />
-        <Buttons.toRoom {...props} title="join" nickname={nickname} id={Date.now().toString()} />
-      </VStack>
-      </Center>
+      <ImageBackground source={require("../../assets/bg.png")} resizeMode="cover" style={styles.image}>
+        <Center
+          px={4}
+          flex={1}
+        >
+          <Text style={styles.titleText}>Syncる</Text>
+          <VStack space={5} alignItems='center'>
+            <TextInput
+              style={styles.textInput}
+              placeholder="ニックネームを入力"
+              onChangeText={(txt: string) => setNickname(txt)}
+            />
+            <Buttons.toRoom {...props} style={styles.joinButton} title="join" nickname={nickname} id={Date.now().toString()} />
+          </VStack>
+        </Center>
+      </ImageBackground>
     </Box>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "#f3ecdc",
     flex: 1
   },
-  nameText: {
+  image: {
+    justifyContent: "center",
+    flex: 1,
+  },
+  titleText: {
+    color: "#FFFFFF",
     fontSize: 64,
     fontWeight: "bold"
   },
+  textInput: {
+    textAlign: "center",
+    fontSize: 18,
+    width: 300,
+    backgroundColor: "#FFFFFF",
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 20,
+    paddingRight: 20,
+    marginTop: 10,
+    marginBottom: 0
+  },
+  joinButton: {
+    backgroundColor: "#fd8814"
+  }
 });

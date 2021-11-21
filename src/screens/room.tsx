@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Buttons } from "../components/buttons";
 import { Text, View, StyleSheet, Vibration } from "react-native";
-import { CheckIcon, HStack, CloseIcon, InfoOutlineIcon, SunIcon, MoonIcon } from "native-base";
+import { CheckIcon, HStack, VStack, CloseIcon, InfoOutlineIcon, SunIcon, MoonIcon } from "native-base";
 import { Accelerometer, ThreeAxisMeasurement } from 'expo-sensors';
 import { post } from "../utils/rest";
 import { distributed, isDataRateStop } from "../utils/calculate";
@@ -164,74 +164,152 @@ export const RoomScreen: FC = (props: any) => {
   }, [data]);
   return (
     <View
-      style={{
-        flex: 1,
-      }}
+      style={styles.bg}
     >
       <Buttons.back {...props} title="Back to top" />
-      {Object.values(userList).sort((a, b) => a.status - b.status).map(u => {
-        return (
-          <View key={u.id}>
-            <HStack space={2} alignItems='center' style={styles.user}>
-              {u.status === Status.OK && (
-                <CheckIcon size="16" mt="0.5" color="emerald.500" />
+      <View
+        style={styles.container}
+      >
+        <View style={styles.flavor}>
+          <Text style={styles.header1}>グループメンバーの様子</Text>
+          <Text style={styles.header2}>分からないことがあったら、</Text>
+          <Text style={styles.header2}>遠慮なく手を挙げて質問しましょう。</Text>
+        </View>
+        <View
+          style={{
+            borderBottomColor: '#DDD',
+            borderBottomWidth: 1,
+          }}
+        />
+        {Object.values(userList).sort((a, b) => a.status - b.status).map(u => {
+          return (
+            <View key={u.id}>
+              <VStack style={styles.user}>
+                {u.status === Status.OK && (
+                  <HStack>
+                    <CheckIcon size="5" mt="0.5" color="emerald.500" />
+                    <Text style={styles.statusText}>なんでも聞いて</Text>
+                  </HStack>
+                )}
+                {u.status === Status.Leave && (
+                  <HStack>
+                    <MoonIcon size="5" mt="0.5" color="black" />
+                    <Text style={styles.statusText}>はずしています</Text>
+                  </HStack>
+                )}
+                {u.status === Status.Concentration && (
+                  <HStack>
+                    <CloseIcon size="5" mt="0.5" color="red.500" />
+                    <Text style={styles.statusText}>集中しています</Text>
+                  </HStack>
+                )}
+                {u.status === Status.Question && (
+                  <HStack>
+                    <InfoOutlineIcon size="5" mt="0.5" color="blue.500" />
+                    <Text style={styles.statusText}>聞きたいことがあります！</Text>
+                  </HStack>
+                )}
+                {u.status === Status.Thankyou && (
+                  <HStack>
+                    <SunIcon size="5" mt="0.5" color="orange.500" />
+                    <Text style={styles.statusText}>回答ありがとうございます！</Text>
+                  </HStack>
+                )}
+                <Text style={styles.nameText}>{u.name}</Text>
+              </VStack>
+              {u.url !== "" && (
+                <Text style={styles.nameText}>{u.url}</Text>
               )}
-              {u.status === Status.Concentration && (
-                <CloseIcon size="16" mt="0.5" color="red.500" />
-              )}
-              {u.status === Status.Question && (
-                <InfoOutlineIcon size="16" mt="0.5" color="blue.500" />
-              )}
-              {u.status === Status.Thankyou && (
-                <SunIcon size="16" mt="0.5" color="orange.500" />
-              )}
-              {u.status === Status.Leave && (
-                <MoonIcon size="16" mt="0.5" color="black" />
-              )}
-              <Text style={styles.nameText}>{u.name}</Text>
-            </HStack>
-            {u.url !== "" && (
-              <Text style={styles.nameText}>{u.url}</Text>
-            )}
-          </View>
-        )
-      })}
-      <View>
-        <Text>
-          x: {round(data.x)} y: {round(data.y)} z: {round(data.z)}
-        </Text>
-        <Text>
-          disX: {threeDistributed.x} disY: {threeDistributed.y} disZ: {threeDistributed.z}
-        </Text>
-        <Text>
-          status: {currentStatus}
-        </Text>
-        <Text>
-          res: {JSON.stringify(res)}
-        </Text>
-        <Text>
-          {errorMessage}
-        </Text>
-        <Text>
-          props: {JSON.stringify(props)}
-        </Text>
-        <Text>
-          nickName: {props.route.params.nickname}
-        </Text>
-        <Text>
-          id: {props.route.params.id}
-        </Text>
+              <View
+                style={{
+                  borderBottomColor: '#aaa',
+                  borderBottomWidth: 1,
+                  marginLeft: 20,
+                  marginRight: 20,
+                }}
+              />
+            </View>
+          )
+        })}
+        <View>
+          <Text>
+            x: {round(data.x)} y: {round(data.y)} z: {round(data.z)}
+          </Text>
+          <Text>
+            disX: {round(threeDistributed.x)} disY: {round(threeDistributed.y)} disZ: {round(threeDistributed.z)}
+          </Text>
+          <Text>
+            status: {currentStatus}
+          </Text>
+          <Text>
+            res: {JSON.stringify(res)}
+          </Text>
+          <Text>
+            {errorMessage}
+          </Text>
+          <Text>
+            props: {JSON.stringify(props)}
+          </Text>
+          <Text>
+            nickName: {props.route.params.nickname}
+          </Text>
+          <Text>
+            id: {props.route.params.id}
+          </Text>
+        </View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  bg: {
+    backgroundColor: "#f3ecdc",
+    flex: 1,
+    paddingTop: 50
+  },
+  container: {
+    backgroundColor: "rgba(255,255,255,0.5)",
+    borderRadius: 10,
+    flex: 1,
+    paddingTop: 30,
+    margin: 10
+  },
+  flavor: {
+    height: 90,
+    // backgroundColor: "#FFF",
+    paddingLeft: 30,
+  },
+  header1: {
+    color: "#001e45",
+    fontSize: 25,
+    fontWeight: "500"
+  },
+  header2: {
+    color: "#555555",
+    fontSize: 16,
+  },
   nameText: {
+    color: "#001e45",
     fontSize: 48,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   user: {
-    margin: 10
-  }
+    margin: 12,
+    marginLeft: 30,
+  },
+  textInput: {
+    backgroundColor: "#FFFFFF",
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 100,
+    paddingRight: 100,
+    marginTop: 10,
+    marginBottom: 0
+  },
+  statusText: {
+    marginLeft: 3,
+    fontSize: 18,
+    color: "#555555"
+  },
 });
