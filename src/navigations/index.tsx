@@ -13,16 +13,16 @@ const nav: React.FC = () => {
       <NavigationContainer>
         <Stack.Navigator
           initialRouteName={stackNameObject.top}
-          screenOptions={{ headerShown: true }}
+          screenOptions={{ headerShown: false }}
         >
           <Stack.Screen
             name={stackNameObject.room}
-            options={{ title: "ルーム詳細" }}
+            options={{ title: "メンバーの状況" }}
             component={RoomScreen}
           />
           <Stack.Screen
             name={stackNameObject.top}
-            options={{ title: "トップ" }}
+            options={{ title: "チェックイン" }}
             component={TopScreenn}
           />
         </Stack.Navigator>
