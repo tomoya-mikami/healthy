@@ -1,11 +1,11 @@
 import React from "react";
 import { Link, Text } from "native-base";
 
-export const LearnNativeBase: React.FC = () => {
+export const MeetURL: React.FC<{url: string}> = (props: {url: string}) => {
   return (
-    <Link href='https://docs.nativebase.io' isExternal>
+    <Link href={props.url} isExternal>
       <Text color='primary.500' underline fontSize={'xl'}>
-        Learn NativeBase
+        meetにログインする
       </Text>
     </Link>
   )

@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { Buttons } from "../components/buttons";
-import { Text, View, StyleSheet, Vibration } from "react-native";
+import { MeetURL } from "../components/links";
+import { Text, View, StyleSheet, Vibration, ScrollView } from "react-native";
 import { CheckIcon, HStack, VStack, CloseIcon, InfoOutlineIcon, SunIcon, MoonIcon } from "native-base";
 import { Accelerometer, ThreeAxisMeasurement } from 'expo-sensors';
 import { post } from "../utils/rest";
@@ -166,7 +167,6 @@ export const RoomScreen: FC = (props: any) => {
     <View
       style={styles.bg}
     >
-      <Buttons.back {...props} title="Back to top" />
       <View
         style={styles.container}
       >
@@ -175,6 +175,7 @@ export const RoomScreen: FC = (props: any) => {
           <Text style={styles.header2}>分からないことがあったら、</Text>
           <Text style={styles.header2}>遠慮なく手を挙げて質問しましょう。</Text>
         </View>
+        <ScrollView>
         <View
           style={{
             borderBottomColor: '#DDD',
@@ -218,7 +219,8 @@ export const RoomScreen: FC = (props: any) => {
                 <Text style={styles.nameText}>{u.name}</Text>
               </VStack>
               {u.url !== "" && (
-                <Text style={styles.nameText}>{u.url}</Text>
+                <MeetURL url={u.url}/>
+                // <Text style={styles.nameText}>{u.url}</Text>
               )}
               <View
                 style={{
@@ -231,6 +233,7 @@ export const RoomScreen: FC = (props: any) => {
             </View>
           )
         })}
+        </ScrollView>
         <View>
           <Text>
             x: {round(data.x)} y: {round(data.y)} z: {round(data.z)}
